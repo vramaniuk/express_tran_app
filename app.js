@@ -1,20 +1,20 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express');
+const path = require('path');
+// const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+// const index = require('./routes/index');
+// const users = require('./routes/users');
 
-var app = express();
+const app = express();
 
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackConfig = require('./webpack.config');
 // const expressMongoDb = require('express-mongo-db');
-var MongoClient = require('mongodb').MongoClient;
+const MongoClient = require('mongodb').MongoClient;
 
 app.use(webpackDevMiddleware(webpack(webpackConfig), {
     publicPath: '/public'
@@ -22,12 +22,16 @@ app.use(webpackDevMiddleware(webpack(webpackConfig), {
 
 app.use(express.static(__dirname + '/public'));
 
+app.get('/', function (req, res) {
+    res.sendfile('public/index.html', { root: __dirname });
+});
+
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
-app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
+// app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 let db;
 // app.use(expressMongoDb('mongodb://localhost:27017/test'),(req,res)=>{
@@ -48,19 +52,23 @@ app.get('/movie', function (req, res) {
         }
         res.send(docs);
     })
-})
+});
+
+app.get('/gettext', function (req, res) {
+    res.send('My api useful text');
+});
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 
-app.use('/', index);
-app.use('/users', users);
+// app.use('/', index);
+// app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    var err = new Error('Not Found');
+    const err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
